@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Frame Extractor</title>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #f7f7f7;
+    color: #333;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  #videoInput {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #fff;
+  }
+
+  #progress {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+
+  #framesHolder.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+
+  #framesHolder img {
+    width: 100%;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+  }
+
+  #framesHolder img:hover {
+    transform: scale(1.03);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="controls">
+    <input id="videoInput" type="file" accept="video/*">
+    <p id="progress">Ready</p>
+  </div>
+
+  <div id="framesHolder" class="grid"></div>
+
+  <svg width="0" height="0">
+    <defs>
+      <filter id="filter">
+        <feColorMatrix in="SourceGraphic" result="saturate0" type="saturate" values="0"/>
+      </filter>
+    </defs>
+  </svg>
+</div>
+
+<script>
+  const videoInput = document.querySelector('#videoInput');
+  const progress = document.querySelector('#progress');
+  const framesHolder = document.querySelector('#framesHolder');
+
+  const video = document.createElement('video');
+  video.preload = "auto";
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  let fps = 1;
+  let startTime, endTime;
+  let numberFrames = 0;
+
+  videoInput.addEventListener('change', function() { 
+    framesHolder.innerHTML = '';
+    progress.textContent = 'Loading...';
+    video.src = URL.createObjectURL(this.files[0]);
+  });
+
+  video.addEventListener('loadeddata', function() {
+    startTime = new Date().getTime();
+    this.currentTime = 0;
+    numberFrames = 0;
+    canvas.width = 160;
+    canvas.height = canvas.width * this.videoHeight / this.videoWidth;
+  });
+
+  video.addEventListener('seeked', function() {
+    drawFrame(this, framesHolder);
+    if (this.currentTime < this.duration) {
+      this.currentTime += 1 / fps;
+      progress.textContent = `${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)}`;
+    } else {
+      endTime = new Date().getTime();
+      const t = (endTime - startTime) / 1000;
+      const m = Math.floor(t / 60);
+      const s = t - m * 60;
+      progress.innerHTML = `Time elapsed: ${m}m ${s.toFixed(2)}s<br/>Frames: ${numberFrames}`;
+      URL.revokeObjectURL(videoInput.src);
+    }
+  });
+
+  function drawFrame(v, holder) {
+    ctx.filter = 'url(#filter)';
+    ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(function(blob) {
+      const img = new Image();
+      img.src = URL.createObjectURL(blob);
+      holder.appendChild(img);
+    }, 'image/jpeg');
+    numberFrames += 1;
+  }
+</script>
+
+</body>
+</html>
