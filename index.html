@@ -6,20 +6,19 @@
 <title>Video Frame Extractor HD 2x2</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; height:100vh; margin:0; }
-.container { width: 100%; max-width: 700px; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); display:flex; flex-direction:column; height:100%; }
+body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; margin:0; }
+.container { width: 100%; max-width: 700px; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); display:flex; flex-direction:column; }
 
-/* Header tetap di atas */
+/* Sticky header */
 .header {
-  padding:20px;
   position: sticky;
-  top:0;
-  background:#fff;
-  z-index:10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  padding-bottom: 10px;
 }
 
-/* Tombol, artikel, progress */
+/* Controls & upload button */
 .controls { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
 .upload-btn {
   display: inline-flex;
@@ -39,18 +38,19 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
 #uploadText { display:inline-block; vertical-align:middle; max-width: calc(100% - 30px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#article { font-size:14px; color:#555; margin-bottom:16px; }
-#progress { font-size:14px; color:#444; margin-bottom:0; text-align:center; }
 
-/* Kontainer hasil frame scrollable */
-.frames-container {
-  flex:1;
-  overflow-y:auto;
-  padding:20px;
-  display:grid;
+#article { font-size:14px; color:#555; margin-bottom:16px; }
+#progress { font-size:14px; color:#444; margin-bottom:16px; text-align:center; }
+
+/* Frames container scrollable */
+#framesHolder {
+  display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap:12px;
+  gap: 12px;
   justify-items: center;
+  overflow-y: auto;
+  max-height: 70vh; /* agar scroll muncul saat frame banyak */
+  padding: 10px;
 }
 
 .frame { width:100%; max-width:300px; position:relative; }
@@ -83,15 +83,14 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
         <input id="videoInput" type="file" accept="video/*">
       </label>
     </div>
-    <p id="article">
-      Video to Image Converter adalah alat untuk mengekstrak frame dari video menjadi gambar berkualitas tinggi secara cepat dan mudah.
-    </p>
     <p id="progress"></p>
   </div>
 
-  <div class="frames-container" id="framesHolder">
-    <!-- Frame video akan muncul di sini -->
-  </div>
+  <p id="article">
+    Video to Image Converter adalah alat untuk mengekstrak frame dari video menjadi gambar berkualitas tinggi secara cepat dan mudah.
+  </p>
+
+  <div id="framesHolder"></div>
 </div>
 
 <script>
