@@ -199,7 +199,7 @@
       const t = (endTime - startTime) / 1000;
       const m = Math.floor(t / 60);
       const s = t - m * 60;
-      progress.innerHTML = `⏱ Waktu proses: ${m}m ${s.toFixed(2)}s<br/>📸 Jumlah frame: ${numberFrames}`;
+      progress.innerHTML = `<i class="fa-solid fa-clock"></i> Waktu proses: ${m}m ${s.toFixed(2)}s<br/><i class="fa-solid fa-camera"></i> Jumlah frame: ${numberFrames}`;
       URL.revokeObjectURL(videoInput.src);
     }
   });
