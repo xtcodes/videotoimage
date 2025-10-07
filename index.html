@@ -6,10 +6,21 @@
 <title>Video Frame Extractor HD 2x2</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; }
-.container { width: 100%; max-width: 700px; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-.controls { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; height:100vh; margin:0; }
+.container { width: 100%; max-width: 700px; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); display:flex; flex-direction:column; height:100%; }
 
+/* Header tetap di atas */
+.header {
+  padding:20px;
+  position: sticky;
+  top:0;
+  background:#fff;
+  z-index:10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Tombol dan progress */
+.controls { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
 .upload-btn {
   display: inline-flex;
   align-items: center;
@@ -24,26 +35,20 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
   position:relative;
   width:100%;
 }
-
 .upload-btn i { margin-right:8px; }
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+#uploadText { display:inline-block; vertical-align:middle; max-width: calc(100% - 30px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#progress { font-size:14px; color:#444; margin-bottom:0; text-align:center; }
 
-#uploadText {
-  display:inline-block;
-  vertical-align:middle;
-  max-width: calc(100% - 30px);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#article { font-size:14px; color:#555; margin-bottom:16px; }
-
-#framesHolder {
-  display: grid;
+/* Kontainer hasil frame scrollable */
+.frames-container {
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+  display:grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap:12px;
   justify-items: center;
 }
 
@@ -65,27 +70,24 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 .overlay-alert { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); color:#fff; padding:8px 14px; border-radius:6px; font-size:14px; text-align:center; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.4s ease, transform 0.3s ease; z-index:3; }
 .frame.show-alert .overlay-alert { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
 .overlay-alert i { color:#28a745; margin-right:6px; }
-
-#progress { font-size:14px; color:#444; margin-bottom:16px; text-align:center; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="controls">
-    <label class="upload-btn">
-      <i class="fa-solid fa-file-video"></i> <span id="uploadText">Upload Video</span>
-      <input id="videoInput" type="file" accept="video/*">
-    </label>
+  <div class="header">
+    <div class="controls">
+      <label class="upload-btn">
+        <i class="fa-solid fa-file-video"></i> <span id="uploadText">Upload Video</span>
+        <input id="videoInput" type="file" accept="video/*">
+      </label>
+    </div>
+    <p id="progress"></p>
   </div>
 
-  <!-- Artikel singkat sebelum video diunggah -->
-  <p id="article">
-    Video to Image Converter adalah alat untuk mengekstrak frame dari video menjadi gambar berkualitas tinggi secara cepat dan mudah.
-  </p>
-
-  <p id="progress"></p>
-  <div id="framesHolder"></div>
+  <div class="frames-container" id="framesHolder">
+    <!-- Frame video akan muncul di sini -->
+  </div>
 </div>
 
 <script>
@@ -93,13 +95,9 @@ const videoInput = document.querySelector('#videoInput');
 const uploadText = document.querySelector('#uploadText');
 const framesHolder = document.querySelector('#framesHolder');
 const progress = document.querySelector('#progress');
-const article = document.querySelector('#article');
 
 videoInput.addEventListener('change', async function() {
   if(!this.files.length) return;
-
-  // Sembunyikan artikel saat video diunggah
-  article.style.display = 'none';
 
   let fileName = this.files[0].name;
   if(fileName.length > 25) fileName = fileName.slice(0,22)+'...';
