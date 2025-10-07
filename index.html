@@ -7,24 +7,41 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; }
-.container { width:100%; max-width:700px; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.container { width: 100%; max-width: 700px; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 .controls { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
-.upload-btn { min-width: 0; overflow: hidden; flex:1; display:inline-flex; align-items:center; justify-content:center; padding:14px; background:#0078d7; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:15px; position:relative; }
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding:14px;
+  background:#0078d7;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:15px;
+  position:relative;
+  max-width:100%;
+  overflow:hidden;
+}
+
+.upload-btn span {
+  display:inline-block;
+  vertical-align:middle;
+  max-width: calc(100% - 30px); /* sisakan ruang untuk ikon */
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
 .upload-btn i { margin-right:8px; }
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-.upload-btn span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* memotong nama file yang terlalu panjang */
-  max-width: 100%;
-  display: inline-block;
-  vertical-align: middle;
-}
-  
+
 #framesHolder {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2x2 tetap di semua layar */
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   justify-items: center;
 }
@@ -38,10 +55,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
   z-index:1;
   position:relative;
 }
-.frame:hover img {
-  transform: scale(1.05); /* hover lebih kecil & stabil */
-  /* z-index tetap 1, hover gambar lain tidak mengganggu */
-}
+.frame:hover img { transform: scale(1.05); }
 
 .download-icon { position:absolute; bottom:8px; right:10px; z-index:2; color:rgba(255,255,255,0.85); font-size:16px; cursor:pointer; text-shadow:0 0 3px rgba(0,0,0,0.5); }
 .download-icon:hover { color:#0078d7; transform:scale(1.15); }
@@ -76,18 +90,20 @@ const progress = document.querySelector('#progress');
 
 videoInput.addEventListener('change', async function() {
   if(!this.files.length) return;
-  const file = this.files[0];
-  uploadText.textContent = file.name;
+  let fileName = this.files[0].name;
+  if(fileName.length > 25) fileName = fileName.slice(0,22)+'...';
+  uploadText.textContent = fileName;
+
   framesHolder.innerHTML = '';
   progress.textContent = '';
 
-  const blobURL = URL.createObjectURL(file);
+  const blobURL = URL.createObjectURL(this.files[0]);
   const videoElem = document.createElement('video');
   videoElem.src = blobURL;
   videoElem.preload = 'metadata';
 
   videoElem.addEventListener('loadedmetadata', async ()=>{
-    const frameRate = 1; // frame per detik, bisa diubah
+    const frameRate = 1; // frame per detik
     const totalFrames = Math.ceil(videoElem.duration * frameRate);
 
     for(let i=0;i<totalFrames;i++){
