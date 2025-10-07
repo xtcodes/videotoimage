@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Frame Extractor Bonus</title>
+<title>Video Frame Extractor Ultimate</title>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -61,7 +61,6 @@ body {
   cursor: pointer;
 }
 
-/* Tombol reset */
 .reset-btn {
   display:inline-flex;
   align-items:center;
@@ -113,18 +112,20 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   transition: transform 0.25s ease;
   display: block;
+  z-index: 1;
+  position: relative;
 }
 
+/* Hover preview frame */
 .frame:hover img {
   transform: scale(1.2);
-  z-index: 10;
-  position: relative;
 }
 
 .download-icon {
   position: absolute;
   bottom: 8px;
   right: 10px;
+  z-index: 2; /* pastikan di atas gambar */
   color: rgba(255,255,255,0.85);
   font-size: 16px;
   cursor: pointer;
@@ -141,7 +142,6 @@ body {
   cursor: default;
 }
 
-/* Overlay alert */
 .frame .overlay-alert {
   position: absolute;
   top: 50%;
@@ -158,6 +158,7 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease, transform 0.3s ease;
+  z-index: 3; /* selalu di atas */
 }
 
 .frame.show-alert .overlay-alert {
@@ -206,15 +207,12 @@ let fps = 1;
 let startTime, endTime;
 let numberFrames = 0;
 
-// Upload video
 videoInput.addEventListener('change', function() {
   if (this.files.length > 0) {
     uploadText.textContent = this.files[0].name;
     framesHolder.innerHTML = '';
     progress.textContent = 'Loading...';
     video.src = URL.createObjectURL(this.files[0]);
-
-    // tombol reset kembali normal
     resetBtn.classList.remove('clicked');
   }
 });
@@ -237,7 +235,6 @@ video.addEventListener('seeked', function() {
     const t = (endTime - startTime) / 1000;
     const m = Math.floor(t / 60);
     const s = t - m * 60;
-
     progress.innerHTML = `<i class="fa-solid fa-clock"></i> Waktu proses: ${m}m ${s.toFixed(2)}s<br/><i class="fa-solid fa-camera"></i> Jumlah frame: ${numberFrames}`;
     URL.revokeObjectURL(videoInput.src);
   }
@@ -290,14 +287,11 @@ function drawFrame(v, holder) {
   numberFrames += 1;
 }
 
-// Tombol reset
 resetBtn.addEventListener('click', () => {
   framesHolder.innerHTML = '';
   progress.textContent = 'Ready';
   videoInput.value = '';
   uploadText.textContent = 'Upload Video';
-
-  // ubah warna tombol reset menjadi abu-abu
   resetBtn.classList.add('clicked');
 });
 </script>
