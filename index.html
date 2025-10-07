@@ -36,7 +36,7 @@ body {
 }
 
 .upload-btn {
-  flex:1;  /* tombol upload melebar untuk mengisi ruang tersisa */
+  flex:1;
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -48,6 +48,7 @@ body {
   cursor:pointer;
   font-size:15px;
   transition: background 0.2s ease;
+  position: relative;
 }
 
 .upload-btn i { margin-right:8px; }
@@ -65,7 +66,7 @@ body {
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  height:44px; /* sama tinggi dengan tombol upload */
+  height:44px;
   min-width:44px;
   padding:0 12px;
   background-color:#0078d7;
@@ -164,7 +165,7 @@ body {
 <div class="container">
   <div class="controls">
     <label class="upload-btn">
-      <i class="fa-solid fa-file-video"></i> Upload Video
+      <i class="fa-solid fa-file-video"></i> <span id="uploadText">Upload Video</span>
       <input id="videoInput" type="file" accept="video/*">
     </label>
 
@@ -179,7 +180,7 @@ body {
 
 <script>
 const videoInput = document.querySelector('#videoInput');
-const uploadLabel = document.querySelector('.upload-btn');
+const uploadText = document.querySelector('#uploadText');
 const resetBtn = document.querySelector('#resetBtn');
 const progress = document.querySelector('#progress');
 const framesHolder = document.querySelector('#framesHolder');
@@ -194,10 +195,10 @@ let fps = 1;
 let startTime, endTime;
 let numberFrames = 0;
 
+// Upload video
 videoInput.addEventListener('change', function() {
   if (this.files.length > 0) {
-    const fileName = this.files[0].name;
-    uploadLabel.innerHTML = `<i class="fa-solid fa-file-video"></i> ${fileName}<input id="videoInput" type="file" accept="video/*">`;
+    uploadText.textContent = this.files[0].name;
     framesHolder.innerHTML = '';
     progress.textContent = 'Loading...';
     video.src = URL.createObjectURL(this.files[0]);
@@ -280,7 +281,7 @@ resetBtn.addEventListener('click', () => {
   framesHolder.innerHTML = '';
   progress.textContent = 'Ready';
   videoInput.value = '';
-  uploadLabel.innerHTML = '<i class="fa-solid fa-file-video"></i> Upload Video<input id="videoInput" type="file" accept="video/*">';
+  uploadText.textContent = 'Upload Video';
 });
 </script>
 
