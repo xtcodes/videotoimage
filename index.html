@@ -25,24 +25,42 @@
 
   .controls {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
   }
 
-  #videoInput {
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  /* Tombol Upload Kustom */
+  .upload-btn {
+    display: inline-block;
+    padding: 10px 16px;
+    background-color: #0078d7;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
-    background-color: #fff;
+    transition: background 0.2s ease;
+    font-size: 14px;
+  }
+
+  .upload-btn:hover {
+    background-color: #005fa3;
+  }
+
+  .upload-btn input[type="file"] {
+    display: none;
   }
 
   #progress {
-    padding: 6px 12px;
+    font-size: 14px;
+    color: #444;
+    background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #fff;
+    padding: 6px 10px;
+    width: 100%;
+    max-width: 300px;
   }
 
   #framesHolder.grid {
@@ -70,7 +88,13 @@
 
 <div class="container">
   <div class="controls">
-    <input id="videoInput" type="file" accept="video/*">
+    <!-- Tombol Upload -->
+    <label class="upload-btn">
+      <span id="uploadLabel">📁 Upload Video</span>
+      <input id="videoInput" type="file" accept="video/*">
+    </label>
+
+    <!-- Progress di bawah tombol -->
     <p id="progress">Ready</p>
   </div>
 
@@ -87,6 +111,7 @@
 
 <script>
   const videoInput = document.querySelector('#videoInput');
+  const uploadLabel = document.querySelector('#uploadLabel');
   const progress = document.querySelector('#progress');
   const framesHolder = document.querySelector('#framesHolder');
 
@@ -100,10 +125,14 @@
   let startTime, endTime;
   let numberFrames = 0;
 
-  videoInput.addEventListener('change', function() { 
-    framesHolder.innerHTML = '';
-    progress.textContent = 'Loading...';
-    video.src = URL.createObjectURL(this.files[0]);
+  videoInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+      const fileName = this.files[0].name;
+      uploadLabel.textContent = `🎬 ${fileName}`;
+      framesHolder.innerHTML = '';
+      progress.textContent = 'Loading...';
+      video.src = URL.createObjectURL(this.files[0]);
+    }
   });
 
   video.addEventListener('loadeddata', function() {
@@ -118,13 +147,13 @@
     drawFrame(this, framesHolder);
     if (this.currentTime < this.duration) {
       this.currentTime += 1 / fps;
-      progress.textContent = `${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)}`;
+      progress.textContent = `${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)} detik`;
     } else {
       endTime = new Date().getTime();
       const t = (endTime - startTime) / 1000;
       const m = Math.floor(t / 60);
       const s = t - m * 60;
-      progress.innerHTML = `Time elapsed: ${m}m ${s.toFixed(2)}s<br/>Frames: ${numberFrames}`;
+      progress.innerHTML = `⏱ Waktu proses: ${m}m ${s.toFixed(2)}s<br/>📸 Jumlah frame: ${numberFrames}`;
       URL.revokeObjectURL(videoInput.src);
     }
   });
