@@ -74,10 +74,11 @@ body {
   border:none;
   border-radius:8px;
   cursor:pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .reset-btn:hover { background-color:#005fa3; }
+.reset-btn.clicked { background-color: #ccc; color: #666; }
 
 #progress {
   font-size: 14px;
@@ -87,7 +88,7 @@ body {
   border-radius: 6px;
   padding: 10px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 16px; /* jarak rapi ke frames */
 }
 
 #framesHolder.grid {
@@ -203,6 +204,9 @@ videoInput.addEventListener('change', function() {
     framesHolder.innerHTML = '';
     progress.textContent = 'Loading...';
     video.src = URL.createObjectURL(this.files[0]);
+
+    // tombol reset kembali normal
+    resetBtn.classList.remove('clicked');
   }
 });
 
@@ -283,6 +287,9 @@ resetBtn.addEventListener('click', () => {
   progress.textContent = 'Ready';
   videoInput.value = '';
   uploadText.textContent = 'Upload Video';
+
+  // ubah warna tombol reset menjadi abu-abu
+  resetBtn.classList.add('clicked');
 });
 </script>
 
