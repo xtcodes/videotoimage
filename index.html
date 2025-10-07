@@ -130,19 +130,16 @@
     border-radius: 6px;
     font-size: 14px;
     text-align: center;
-    white-space: nowrap;
+    white-space: nowrap;       /* ⚡ single line */
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   .frame.show-alert .overlay-alert { opacity: 1; }
- 
-  .overlay-alert i {
-   color: #28a745;
-   margin-right: 6px;
-  }
 
+  /* Icon centang hijau */
+  .overlay-alert i { color: #28a745; margin-right: 6px; }
 
   @media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 400px) { #framesHolder.grid { grid-template-columns: 1fr; } }
