@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Frame Extractor WebCodecs</title>
+<title>Video Frame Extractor HD Grid 2x2</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; }
@@ -13,16 +13,30 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 .upload-btn i { margin-right:8px; }
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-#framesHolder { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; justify-items:center; }
-.frame { position:relative; max-width:260px; }
+
+#framesHolder {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  justify-items: center;
+}
+
+@media (max-width:768px) { #framesHolder { grid-template-columns: 1fr 1fr; } }
+@media (max-width:480px) { #framesHolder { grid-template-columns: 1fr; } }
+
+.frame { width:100%; max-width:300px; position:relative; }
 .frame img { width:100%; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1); transition:transform 0.25s ease; z-index:1; position:relative; }
 .frame:hover img { transform:scale(1.2); }
+
 .download-icon { position:absolute; bottom:8px; right:10px; z-index:2; color:rgba(255,255,255,0.85); font-size:16px; cursor:pointer; text-shadow:0 0 3px rgba(0,0,0,0.5); }
 .download-icon:hover { color:#0078d7; transform:scale(1.15); }
 .downloaded { color:#0078d7 !important; cursor:default; }
+
 .overlay-alert { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); color:#fff; padding:8px 14px; border-radius:6px; font-size:14px; text-align:center; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.4s ease, transform 0.3s ease; z-index:3; }
 .frame.show-alert .overlay-alert { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
 .overlay-alert i { color:#28a745; margin-right:6px; }
+
+#progress { font-size:14px; color:#444; background:#f2f2f2; border:1px solid #ccc; border-radius:6px; padding:10px; width:100%; margin-bottom:16px; text-align:center; }
 </style>
 </head>
 <body>
@@ -52,42 +66,30 @@ videoInput.addEventListener('change', async function() {
   framesHolder.innerHTML = '';
   progress.textContent = 'Loading video...';
 
-  const fileArrayBuffer = await file.arrayBuffer();
-
-  if(!('VideoDecoder' in window)){
-    alert('WebCodecs API tidak didukung browser ini. Gunakan Chrome/Edge terbaru.');
-    return;
-  }
-
-  // buat video decoder
-  const decoder = new VideoDecoder({
-    output: frame => handleFrame(frame),
-    error: e => console.error(e)
-  });
-
-  decoder.configure({ codec: 'vp09.00.10.08', optimizeForLatency: true }); // VP9, bisa diganti sesuai video
-
-  // buat Blob sebagai URL untuk fetch video
   const blobURL = URL.createObjectURL(file);
   const videoElem = document.createElement('video');
   videoElem.src = blobURL;
   videoElem.muted = true;
-  videoElem.play();
+
+  await videoElem.play().catch(()=>{}); // autoplay muted
 
   videoElem.addEventListener('loadedmetadata', async ()=>{
-    const totalFrames = 10; // contoh ambil 10 frame dari awal
+    const totalFrames = 4; // 2x2 grid = 4 frame contoh
     for(let i=0;i<totalFrames;i++){
       const canvas = document.createElement('canvas');
       canvas.width = videoElem.videoWidth;
       canvas.height = videoElem.videoHeight;
       const ctx = canvas.getContext('2d');
+
       videoElem.currentTime = i * (videoElem.duration / totalFrames);
       await new Promise(r=>videoElem.addEventListener('seeked',r,{once:true}));
+
       ctx.drawImage(videoElem,0,0,canvas.width,canvas.height);
       canvas.toBlob(blob=>{
         const url = URL.createObjectURL(blob);
         const frameDiv = document.createElement('div');
         frameDiv.classList.add('frame');
+
         const img = document.createElement('img');
         img.src = url;
 
@@ -117,14 +119,13 @@ videoInput.addEventListener('change', async function() {
           frameDiv.classList.add('show-alert');
           setTimeout(()=>frameDiv.classList.remove('show-alert'),1500);
         });
-
       }, 'image/jpeg', 0.95);
       progress.textContent = `Memproses frame ${i+1}/${totalFrames}`;
     }
     progress.textContent = `Selesai! ${totalFrames} frame dihasilkan.`;
   });
 });
-
 </script>
+
 </body>
 </html>
