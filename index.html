@@ -22,7 +22,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
   cursor:pointer;
   font-size:15px;
   position:relative;
-  width:100%; /* tombol tetap penuh lebar container */
+  width:100%;
 }
 
 .upload-btn i { margin-right:8px; }
@@ -32,11 +32,13 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 #uploadText {
   display:inline-block;
   vertical-align:middle;
-  max-width: calc(100% - 30px); /* sisakan ruang untuk ikon */
+  max-width: calc(100% - 30px);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* nama file panjang dipotong */
+  text-overflow: ellipsis;
 }
+
+#article { font-size:14px; color:#555; margin-bottom:16px; }
 
 #framesHolder {
   display: grid;
@@ -77,6 +79,11 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
     </label>
   </div>
 
+  <!-- Artikel singkat sebelum video diunggah -->
+  <p id="article">
+    Video to Image Converter adalah alat untuk mengekstrak frame dari video menjadi gambar berkualitas tinggi secara cepat dan mudah.
+  </p>
+
   <p id="progress"></p>
   <div id="framesHolder"></div>
 </div>
@@ -86,11 +93,15 @@ const videoInput = document.querySelector('#videoInput');
 const uploadText = document.querySelector('#uploadText');
 const framesHolder = document.querySelector('#framesHolder');
 const progress = document.querySelector('#progress');
+const article = document.querySelector('#article');
 
 videoInput.addEventListener('change', async function() {
   if(!this.files.length) return;
+
+  // Sembunyikan artikel saat video diunggah
+  article.style.display = 'none';
+
   let fileName = this.files[0].name;
-  // truncate nama file panjang, tombol tetap penuh
   if(fileName.length > 25) fileName = fileName.slice(0,22)+'...';
   uploadText.textContent = fileName;
 
