@@ -9,11 +9,19 @@
 body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; }
 .container { width:100%; max-width:700px; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 .controls { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
-.upload-btn { flex:1; display:inline-flex; align-items:center; justify-content:center; padding:14px; background:#0078d7; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:15px; position:relative; }
+.upload-btn { min-width: 0; overflow: hidden; flex:1; display:inline-flex; align-items:center; justify-content:center; padding:14px; background:#0078d7; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:15px; position:relative; }
 .upload-btn i { margin-right:8px; }
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-
+.upload-btn span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* memotong nama file yang terlalu panjang */
+  max-width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+  
 #framesHolder {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2x2 tetap di semua layar */
