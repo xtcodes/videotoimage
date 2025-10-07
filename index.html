@@ -7,7 +7,7 @@
 <style>
   * {
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: system-ui, sans-serif;
     margin: 0;
     padding: 0;
   }
@@ -15,33 +15,43 @@
   body {
     background-color: #f7f7f7;
     color: #333;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
   }
 
   .container {
-    max-width: 1000px;
-    margin: 30px auto;
+    width: 100%;
+    max-width: 900px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 20px;
     padding: 20px;
   }
 
   .controls {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 20px;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 24px;
   }
 
   /* Tombol Upload Kustom */
   .upload-btn {
+    position: relative;
     display: inline-block;
-    padding: 10px 16px;
+    width: 100%;
+    padding: 14px;
     background-color: #0078d7;
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s ease;
-    font-size: 14px;
+    font-size: 15px;
+    text-align: center;
   }
 
   .upload-btn:hover {
@@ -49,31 +59,33 @@
   }
 
   .upload-btn input[type="file"] {
-    display: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
   }
 
   #progress {
     font-size: 14px;
     color: #444;
-    background-color: #fff;
+    background-color: #f2f2f2;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 6px 10px;
+    border-radius: 6px;
+    padding: 10px;
     width: 100%;
-    max-width: 300px;
   }
 
   #framesHolder.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
   }
 
   #framesHolder img {
     width: 100%;
     display: block;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: transform 0.2s ease;
@@ -81,6 +93,20 @@
 
   #framesHolder img:hover {
     transform: scale(1.03);
+  }
+
+  /* Responsif untuk layar kecil */
+  @media (max-width: 600px) {
+    .container {
+      padding: 16px;
+    }
+    .upload-btn {
+      font-size: 16px;
+      padding: 12px;
+    }
+    #framesHolder.grid {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
   }
 </style>
 </head>
@@ -90,7 +116,7 @@
   <div class="controls">
     <!-- Tombol Upload -->
     <label class="upload-btn">
-      <span id="uploadLabel">📁 Upload Video</span>
+      📁 Upload Video
       <input id="videoInput" type="file" accept="video/*">
     </label>
 
@@ -111,7 +137,7 @@
 
 <script>
   const videoInput = document.querySelector('#videoInput');
-  const uploadLabel = document.querySelector('#uploadLabel');
+  const uploadLabel = document.querySelector('.upload-btn');
   const progress = document.querySelector('#progress');
   const framesHolder = document.querySelector('#framesHolder');
 
@@ -128,7 +154,7 @@
   videoInput.addEventListener('change', function() {
     if (this.files.length > 0) {
       const fileName = this.files[0].name;
-      uploadLabel.textContent = `🎬 ${fileName}`;
+      uploadLabel.innerHTML = `🎬 ${fileName}<input id="videoInput" type="file" accept="video/*">`;
       framesHolder.innerHTML = '';
       progress.textContent = 'Loading...';
       video.src = URL.createObjectURL(this.files[0]);
