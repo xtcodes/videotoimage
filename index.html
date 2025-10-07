@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Frame Extractor</title>
 
-<!-- Tambahkan Font Awesome untuk ikon download -->
+<!-- Font Awesome untuk ikon download -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -106,20 +106,19 @@
 
   .download-icon {
     position: absolute;
-    bottom: 6px;
-    right: 8px;
-    background-color: rgba(0,0,0,0.6);
-    color: white;
-    border-radius: 50%;
-    padding: 6px;
+    bottom: 8px;
+    right: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease, transform 0.2s ease;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
   }
 
-  .download-icon:hover {
-    background-color: #0078d7;
-    transform: scale(1.1);
+  .download-icon:hover,
+  .download-icon:active {
+    color: #0078d7;
+    transform: scale(1.15);
   }
 
   @media (max-width: 768px) {
