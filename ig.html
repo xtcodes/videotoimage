@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Downloader</title>
+<style>
+$primary: #F44336;
+$secondary: #E53935;
+$dark: #333;
+$light: #f9f9f9;
+
+*{
+	box-sizing:border-box;
+}
+
+html,body{
+	position:relative;
+	height:100%;
+	margin:0;
+	padding:0;
+	font-family:"consolas",monospace;
+	font-size:14px;
+	line-height:1.5;
+	background:$light;
+	color:$dark;
+}
+
+header{
+	position: relative;
+	width:100%;
+	height:4em;
+	background:$primary;
+	text-align:center;
+	color:$light;
+}
+
+input{
+	display:inline-block;
+	width:70%;
+	min-height:2.8em;
+	padding:0.5em;
+	margin:0.5em 0;
+	background:$secondary;
+	border-color:$secondary;
+	border-width:1px;
+	color:$light;
+}
+input:focus{
+	border-color:$primary;
+	outline:none;
+}
+
+button.search{
+	display:inline-block;
+	padding:0.5em 1em;
+	background:$secondary;
+	color:$light;
+	border:none;
+	cursor:pointer;
+}
+button.search:hover{
+	background:$primary;
+}
+
+.result{
+	margin: 2em auto;
+	max-width: 40em;
+	text-align:center;
+}
+
+.result img, .result video{
+	max-width: 100%;
+	margin: 1em 0;
+}
+
+.download{
+	display:inline-block;
+	padding:0.5em 1em;
+	background:$secondary;
+	color:$light;
+	text-decoration:none;
+	margin-top:0.5em;
+}
+.download:hover{
+	background:$primary;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <input type="text" id="urlInput" placeholder="Paste Instagram URL here">
+  <button class="search" onclick="downloadInstagram()">Render</button>
+</header>
+
+<section class="result" id="result">
+  <p>Paste a public Instagram post link above and click Render.</p>
+</section>
+
+<script>
+async function downloadInstagram() {
+  const url = document.getElementById('urlInput').value;
+  const result = document.getElementById('result');
+  result.innerHTML = "Loading...";
+
+  if(!url) {
+    result.innerHTML = "<p>Please enter a valid Instagram URL.</p>";
+    return;
+  }
+
+  try {
+    // Instagram oEmbed API
+    const apiURL = `https://api.instagram.com/oembed/?url=${encodeURIComponent(url)}`;
+    const response = await fetch(apiURL);
+    if(!response.ok) throw new Error('Failed to fetch oEmbed data');
+
+    const data = await response.json();
+    
+    result.innerHTML = ''; // clear previous content
+
+    // Check if video exists
+    if(data.video_url){
+      const video = document.createElement('video');
+      video.src = data.video_url;
+      video.controls = true;
+      video.autoplay = false;
+      result.appendChild(video);
+
+      const link = document.createElement('a');
+      link.href = data.video_url;
+      link.download = "instagram_video.mp4";
+      link.textContent = "Download Video";
+      link.className = "download";
+      result.appendChild(link);
+    } 
+    // Else display image
+    else if(data.thumbnail_url){
+      const img = document.createElement('img');
+      img.src = data.thumbnail_url;
+      result.appendChild(img);
+
+      const link = document.createElement('a');
+      link.href = data.thumbnail_url;
+      link.download = "instagram_image.jpg";
+      link.textContent = "Download Image";
+      link.className = "download";
+      result.appendChild(link);
+    } else {
+      result.innerHTML = "<p>Could not find image or video.</p>";
+    }
+
+  } catch(err) {
+    console.error(err);
+    result.innerHTML = "<p>Error fetching Instagram content. Make sure the post is public.</p>";
+  }
+}
+</script>
+
+</body>
+</html>
