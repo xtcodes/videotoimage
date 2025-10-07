@@ -17,7 +17,7 @@
     color: #333;
     display: flex;
     justify-content: center;
-    min-height: 100vh;
+    padding: 20px; /* hilangkan min-height agar tidak terlalu tinggi */
   }
 
   .container {
@@ -26,8 +26,8 @@
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin: 20px;
     padding: 20px;
+    height: auto; /* otomatis menyesuaikan konten */
   }
 
   .controls {
@@ -95,8 +95,11 @@
     transform: scale(1.03);
   }
 
-  /* Responsif untuk layar kecil */
+  /* Responsif */
   @media (max-width: 600px) {
+    body {
+      padding: 12px;
+    }
     .container {
       padding: 16px;
     }
@@ -120,7 +123,7 @@
       <input id="videoInput" type="file" accept="video/*">
     </label>
 
-    <!-- Progress di bawah tombol -->
+    <!-- Progress -->
     <p id="progress">Ready</p>
   </div>
 
