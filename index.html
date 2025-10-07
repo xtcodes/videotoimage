@@ -9,160 +9,154 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  * { box-sizing: border-box; font-family: system-ui, sans-serif; margin:0; padding:0; }
+* { box-sizing: border-box; font-family: system-ui, sans-serif; margin:0; padding:0; }
 
-  body {
-    background-color: #f7f7f7;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 600px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 20px;
-  }
-
-  .controls {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-
-  .upload-btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px;
-    background-color: #0078d7;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 15px;
-  }
-
-  .upload-btn i { margin-right: 8px; }
-
-  .upload-btn:hover { background-color: #005fa3; }
-
-  .upload-btn input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  #progress {
-    font-size: 14px;
-    color: #444;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    width: 100%;
-  }
-
-  #framesHolder.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    justify-items: center;
-  }
-
-  .frame {
-    position: relative;
-    width: 100%;
-    max-width: 260px;
-  }
-
-  .frame img {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-    display: block;
-  }
-
-  .frame img:hover { transform: scale(1.03); }
-
-  .download-icon {
-    position: absolute;
-    bottom: 8px;
-    right: 10px;
-    color: rgba(255,255,255,0.85);
-    font-size: 16px;
-    cursor: pointer;
-    transition: color 0.2s ease, transform 0.2s ease;
-    text-shadow: 0 0 3px rgba(0,0,0,0.5);
-  }
-
- .reset-btn {
-  display: inline-flex;
-  align-items: center;
+body {
+  background-color: #f7f7f7;
+  color: #333;
+  display: flex;
   justify-content: center;
-  height: 44px;           /* samakan dengan tombol upload */
-  min-width: 44px;
-  padding: 0 12px;
-  background-color: #0078d7;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.controls {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom: 12px;
+}
+
+.upload-btn {
+  flex:1;  /* tombol upload melebar untuk mengisi ruang tersisa */
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 14px;
+  background-color:#0078d7;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:15px;
   transition: background 0.2s ease;
+}
+
+.upload-btn i { margin-right:8px; }
+.upload-btn:hover { background-color:#005fa3; }
+
+.upload-btn input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Tombol reset */
+.reset-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:44px; /* sama tinggi dengan tombol upload */
+  min-width:44px;
+  padding:0 12px;
+  background-color:#0078d7;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition: background 0.2s ease;
+}
+
+.reset-btn:hover { background-color:#005fa3; }
+
+#progress {
+  font-size: 14px;
+  color: #444;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+}
+
+#framesHolder.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  justify-items: center;
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: 260px;
+}
+
+.frame img {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  display: block;
+}
+
+.frame img:hover { transform: scale(1.03); }
+
+.download-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  color: rgba(255,255,255,0.85);
   font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
 }
 
-.reset-btn:hover {
-  background-color: #005fa3;
+.download-icon:hover { color: #0078d7; transform: scale(1.15); }
+
+.downloaded {
+  color: #0078d7 !important;
+  text-shadow: none;
+  transform: none;
+  cursor: default;
 }
 
+/* Overlay alert */
+.frame .overlay-alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-  .download-icon:hover { color: #0078d7; transform: scale(1.15); }
+.frame.show-alert .overlay-alert { opacity: 1; }
+.overlay-alert i { color: #28a745; margin-right: 6px; }
 
-  .downloaded {
-    color: #0078d7 !important;
-    text-shadow: none;
-    transform: none;
-    cursor: default;
-  }
-
-  /* Overlay alert */
-  .frame .overlay-alert {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-size: 14px;
-    text-align: center;
-    white-space: nowrap; 
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .frame.show-alert .overlay-alert { opacity: 1; }
-
-  /* Icon centang hijau */
-  .overlay-alert i { color: #28a745; margin-right: 6px; }
-
-  @media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 400px) { #framesHolder.grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 400px) { #framesHolder.grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -175,9 +169,8 @@
     </label>
 
     <button id="resetBtn" class="reset-btn">
-  <i class="fa-solid fa-rotate-left fa-lg"></i>
-</button>
-
+      <i class="fa-solid fa-rotate-left fa-lg"></i>
+    </button>
   </div>
 
   <p id="progress">Ready</p>
@@ -289,7 +282,6 @@ resetBtn.addEventListener('click', () => {
   videoInput.value = '';
   uploadLabel.innerHTML = '<i class="fa-solid fa-file-video"></i> Upload Video<input id="videoInput" type="file" accept="video/*">';
 });
-
 </script>
 
 </body>
