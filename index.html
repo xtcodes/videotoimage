@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Frame Extractor</title>
+<title>Video Frame Extractor Bonus</title>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -88,12 +88,12 @@ body {
   border-radius: 6px;
   padding: 10px;
   width: 100%;
-  margin-bottom: 16px; /* jarak rapi ke frames */
+  margin-bottom: 16px;
 }
 
 #framesHolder.grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
   justify-items: center;
 }
@@ -102,6 +102,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 260px;
+  transition: z-index 0.2s ease;
 }
 
 .frame img {
@@ -110,11 +111,15 @@ body {
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
   display: block;
 }
 
-.frame img:hover { transform: scale(1.03); }
+.frame:hover img {
+  transform: scale(1.2);
+  z-index: 10;
+  position: relative;
+}
 
 .download-icon {
   position: absolute;
@@ -152,10 +157,14 @@ body {
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease, transform 0.3s ease;
 }
 
-.frame.show-alert .overlay-alert { opacity: 1; }
+.frame.show-alert .overlay-alert {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
 .overlay-alert i { color: #28a745; margin-right: 6px; }
 
 @media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
