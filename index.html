@@ -16,23 +16,23 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 
 #framesHolder {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* 2x2 tetap di semua layar */
   gap: 12px;
   justify-items: center;
 }
 
 .frame { width:100%; max-width:300px; position:relative; }
 .frame img {
-  width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width:100%;
+  border-radius:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.1);
   transition: transform 0.2s ease;
-  z-index: 1;
-  position: relative;
+  z-index:1;
+  position:relative;
 }
-
 .frame:hover img {
-  transform: scale(1.05); /* skala lebih kecil, tidak menutupi teks progress */
+  transform: scale(1.05); /* hover lebih kecil & stabil */
+  /* z-index tetap 1, hover gambar lain tidak mengganggu */
 }
 
 .download-icon { position:absolute; bottom:8px; right:10px; z-index:2; color:rgba(255,255,255,0.85); font-size:16px; cursor:pointer; text-shadow:0 0 3px rgba(0,0,0,0.5); }
