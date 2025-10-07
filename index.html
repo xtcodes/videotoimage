@@ -17,7 +17,7 @@
     color: #333;
     display: flex;
     justify-content: center;
-    padding: 20px; /* hilangkan min-height agar tidak terlalu tinggi */
+    padding: 20px;
   }
 
   .container {
@@ -27,7 +27,7 @@
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     padding: 20px;
-    height: auto; /* otomatis menyesuaikan konten */
+    height: auto;
   }
 
   .controls {
@@ -38,7 +38,7 @@
     margin-bottom: 24px;
   }
 
-  /* Tombol Upload Kustom */
+  /* Tombol Upload */
   .upload-btn {
     position: relative;
     display: inline-block;
@@ -75,14 +75,17 @@
     width: 100%;
   }
 
+  /* Grid Gambar: 3 kolom di desktop */
   #framesHolder.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(3, 1fr); /* tetap 3 kolom */
     gap: 12px;
+    justify-items: center;
   }
 
   #framesHolder img {
     width: 100%;
+    max-width: 260px; /* biar tidak terlalu besar */
     display: block;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -95,7 +98,14 @@
     transform: scale(1.03);
   }
 
-  /* Responsif */
+  /* Tablet: 2 kolom */
+  @media (max-width: 900px) {
+    #framesHolder.grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Mobile: 1 kolom */
   @media (max-width: 600px) {
     body {
       padding: 12px;
@@ -108,7 +118,7 @@
       padding: 12px;
     }
     #framesHolder.grid {
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: 1fr;
     }
   }
 </style>
