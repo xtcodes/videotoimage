@@ -22,22 +22,21 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
   cursor:pointer;
   font-size:15px;
   position:relative;
-  max-width:100%;
-  overflow:hidden;
-}
-
-.upload-btn span {
-  display:inline-block;
-  vertical-align:middle;
-  max-width: calc(100% - 30px); /* sisakan ruang untuk ikon */
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  width:100%; /* tombol tetap penuh lebar container */
 }
 
 .upload-btn i { margin-right:8px; }
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+
+#uploadText {
+  display:inline-block;
+  vertical-align:middle;
+  max-width: calc(100% - 30px); /* sisakan ruang untuk ikon */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* nama file panjang dipotong */
+}
 
 #framesHolder {
   display: grid;
@@ -91,6 +90,7 @@ const progress = document.querySelector('#progress');
 videoInput.addEventListener('change', async function() {
   if(!this.files.length) return;
   let fileName = this.files[0].name;
+  // truncate nama file panjang, tombol tetap penuh
   if(fileName.length > 25) fileName = fileName.slice(0,22)+'...';
   uploadText.textContent = fileName;
 
