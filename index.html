@@ -11,9 +11,12 @@ body {
   background: #f7f7f7;
   color: #333;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
   margin: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .container {
@@ -94,8 +97,6 @@ body {
 /* Footer style */
 .footer {
   margin-top: 20px;
-  padding-top: 12px;
-  border-top: 1px solid #ddd;
   font-size: 13px;
   color: #777;
   text-align: center;
@@ -122,9 +123,10 @@ body {
   <div id="framesHolder"></div>
 </div>
 
-  <div class="footer">
-    &copy; 2025 Video Frame Extractor. Semua hak cipta dilindungi.
-  </div>
+<!-- Footer di luar container -->
+<div class="footer">
+  &copy; 2025 Video Frame Extractor. Semua hak cipta dilindungi.
+</div>
 
 <script>
 const videoInput = document.querySelector('#videoInput');
