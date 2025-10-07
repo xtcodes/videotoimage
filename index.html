@@ -19,7 +19,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Tombol dan progress */
+/* Tombol, artikel, progress */
 .controls { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
 .upload-btn {
   display: inline-flex;
@@ -39,6 +39,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 .upload-btn:hover { background:#005fa3; }
 .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
 #uploadText { display:inline-block; vertical-align:middle; max-width: calc(100% - 30px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#article { font-size:14px; color:#555; margin-bottom:16px; }
 #progress { font-size:14px; color:#444; margin-bottom:0; text-align:center; }
 
 /* Kontainer hasil frame scrollable */
@@ -82,6 +83,9 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
         <input id="videoInput" type="file" accept="video/*">
       </label>
     </div>
+    <p id="article">
+      Video to Image Converter adalah alat untuk mengekstrak frame dari video menjadi gambar berkualitas tinggi secara cepat dan mudah.
+    </p>
     <p id="progress"></p>
   </div>
 
@@ -95,9 +99,13 @@ const videoInput = document.querySelector('#videoInput');
 const uploadText = document.querySelector('#uploadText');
 const framesHolder = document.querySelector('#framesHolder');
 const progress = document.querySelector('#progress');
+const article = document.querySelector('#article');
 
 videoInput.addEventListener('change', async function() {
   if(!this.files.length) return;
+
+  // Sembunyikan artikel saat video diunggah
+  article.style.display = 'none';
 
   let fileName = this.files[0].name;
   if(fileName.length > 25) fileName = fileName.slice(0,22)+'...';
