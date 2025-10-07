@@ -137,6 +137,12 @@
   }
 
   .frame.show-alert .overlay-alert { opacity: 1; }
+ 
+  .overlay-alert i {
+   color: #28a745;
+   margin-right: 6px;
+  }
+
 
   @media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 400px) { #framesHolder.grid { grid-template-columns: 1fr; } }
@@ -226,7 +232,7 @@ function drawFrame(v, holder) {
 
     const overlay = document.createElement('div');
     overlay.classList.add('overlay-alert');
-    overlay.textContent = 'Sudah diunduh';
+    overlay.innerHTML = '<i class="fa-solid fa-check"></i> Sudah diunduh';
 
     frameDiv.appendChild(img);
     frameDiv.appendChild(downloadIcon);
