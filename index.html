@@ -174,9 +174,10 @@
       <input id="videoInput" type="file" accept="video/*">
     </label>
 
-    <button id="resetBtn" class="upload-btn" style="padding:0 12px; width:auto; font-size:16px; display:flex; align-items:center; justify-content:center;">
-      <i class="fa-solid fa-rotate-left fa-lg"></i>
-    </button>
+    <button id="resetBtn" class="reset-btn">
+  <i class="fa-solid fa-rotate-left fa-lg"></i>
+</button>
+
   </div>
 
   <p id="progress">Ready</p>
@@ -288,6 +289,7 @@ resetBtn.addEventListener('click', () => {
   videoInput.value = '';
   uploadLabel.innerHTML = '<i class="fa-solid fa-file-video"></i> Upload Video<input id="videoInput" type="file" accept="video/*">';
 });
+
 </script>
 
 </body>
