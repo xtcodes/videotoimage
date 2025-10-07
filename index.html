@@ -61,15 +61,24 @@ body {
 #progress { font-size:14px; color:#444; margin-bottom:16px; text-align:center; }
 
 /* Frames container scrollable */
-#framesHolder {
+ #framesHolder {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   justify-items: center;
-  overflow-y: auto;
+  overflow-y: auto;    /* scroll vertikal */
+  overflow-x: hidden;  /* hilangkan scroll horizontal */
   max-height: 70vh;
-  padding-top: 10px; /* beri jarak atas */
+  padding-top: 10px;
+
+  /* Sembunyikan scrollbar untuk berbagai browser */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
 }
+#framesHolder::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 .frame { width:100%; max-width:300px; position:relative; }
 .frame img {
   width:100%;
