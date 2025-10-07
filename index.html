@@ -5,16 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Frame Extractor</title>
 
-<!-- Font Awesome untuk ikon download -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  * {
-    box-sizing: border-box;
-    font-family: system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+  * { box-sizing: border-box; font-family: system-ui, sans-serif; margin:0; padding:0; }
 
   body {
     background-color: #f7f7f7;
@@ -56,9 +51,9 @@
     text-align: center;
   }
 
-  .upload-btn:hover {
-    background-color: #005fa3;
-  }
+  .upload-btn i { margin-right: 8px; }
+
+  .upload-btn:hover { background-color: #005fa3; }
 
   .upload-btn input[type="file"] {
     position: absolute;
@@ -100,27 +95,21 @@
     display: block;
   }
 
-  .frame img:hover {
-    transform: scale(1.03);
-  }
+  .frame img:hover { transform: scale(1.03); }
 
   .download-icon {
     position: absolute;
     bottom: 8px;
     right: 10px;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255,255,255,0.85);
     font-size: 16px;
     cursor: pointer;
     transition: color 0.2s ease, transform 0.2s ease;
     text-shadow: 0 0 3px rgba(0,0,0,0.5);
   }
 
-  .download-icon:hover {
-    color: #0078d7;
-    transform: scale(1.15);
-  }
+  .download-icon:hover { color: #0078d7; transform: scale(1.15); }
 
-  /* Warna tetap biru setelah diklik */
   .downloaded {
     color: #0078d7 !important;
     text-shadow: none;
@@ -128,17 +117,28 @@
     cursor: default;
   }
 
-  @media (max-width: 768px) {
-    #framesHolder.grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  /* Overlay alert */
+  .frame .overlay-alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
-  @media (max-width: 400px) {
-    #framesHolder.grid {
-      grid-template-columns: 1fr;
-    }
-  }
+  .frame.show-alert .overlay-alert { opacity: 1; }
+
+  @media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 400px) { #framesHolder.grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -156,86 +156,101 @@
 </div>
 
 <script>
-  const videoInput = document.querySelector('#videoInput');
-  const uploadLabel = document.querySelector('.upload-btn');
-  const progress = document.querySelector('#progress');
-  const framesHolder = document.querySelector('#framesHolder');
+const videoInput = document.querySelector('#videoInput');
+const uploadLabel = document.querySelector('.upload-btn');
+const progress = document.querySelector('#progress');
+const framesHolder = document.querySelector('#framesHolder');
 
-  const video = document.createElement('video');
-  video.preload = "auto";
+const video = document.createElement('video');
+video.preload = "auto";
 
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
 
-  let fps = 1;
-  let startTime, endTime;
-  let numberFrames = 0;
+let fps = 1;
+let startTime, endTime;
+let numberFrames = 0;
 
-  videoInput.addEventListener('change', function() {
-    if (this.files.length > 0) {
-      const fileName = this.files[0].name;
-      uploadLabel.innerHTML = `<i class="fa-solid fa-file-video"></li> ${fileName}<input id="videoInput" type="file" accept="video/*">`;
-      framesHolder.innerHTML = '';
-      progress.textContent = 'Loading...';
-      video.src = URL.createObjectURL(this.files[0]);
-    }
-  });
-
-  video.addEventListener('loadeddata', function() {
-    startTime = new Date().getTime();
-    this.currentTime = 0;
-    numberFrames = 0;
-    canvas.width = 160;
-    canvas.height = canvas.width * this.videoHeight / this.videoWidth;
-  });
-
-  video.addEventListener('seeked', function() {
-    drawFrame(this, framesHolder);
-    if (this.currentTime < this.duration) {
-      this.currentTime += 1 / fps;
-      progress.textContent = `${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)} detik`;
-    } else {
-      endTime = new Date().getTime();
-      const t = (endTime - startTime) / 1000;
-      const m = Math.floor(t / 60);
-      const s = t - m * 60;
-      progress.innerHTML = `<i class="fa-solid fa-clock"></i> Waktu proses: ${m}m ${s.toFixed(2)}s<br/><i class="fa-solid fa-camera"></i> Jumlah frame: ${numberFrames}`;
-      URL.revokeObjectURL(videoInput.src);
-    }
-  });
-
-  function drawFrame(v, holder) {
-    ctx.filter = 'none';
-    ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
-
-    canvas.toBlob(function(blob) {
-      const url = URL.createObjectURL(blob);
-      const frameDiv = document.createElement('div');
-      frameDiv.classList.add('frame');
-
-      const img = document.createElement('img');
-      img.src = url;
-
-      const downloadIcon = document.createElement('a');
-      downloadIcon.href = url;
-      downloadIcon.download = `frame_${numberFrames + 1}.jpg`;
-      downloadIcon.classList.add('download-icon');
-      downloadIcon.innerHTML = '<i class="fa-solid fa-download"></i>';
-
-      // Saat ikon diklik → ubah warna jadi biru permanen
-      downloadIcon.addEventListener('click', (e) => {
-        // biarkan proses download jalan
-        setTimeout(() => {
-          downloadIcon.classList.add('downloaded');
-        }, 100);
-      });
-
-      frameDiv.appendChild(img);
-      frameDiv.appendChild(downloadIcon);
-      holder.appendChild(frameDiv);
-    }, 'image/jpeg', 0.95);
-    numberFrames += 1;
+videoInput.addEventListener('change', function() {
+  if (this.files.length > 0) {
+    const fileName = this.files[0].name;
+    uploadLabel.innerHTML = `<i class="fa-solid fa-file-video"></i> ${fileName}<input id="videoInput" type="file" accept="video/*">`;
+    framesHolder.innerHTML = '';
+    progress.textContent = 'Loading...';
+    video.src = URL.createObjectURL(this.files[0]);
   }
+});
+
+video.addEventListener('loadeddata', function() {
+  startTime = new Date().getTime();
+  this.currentTime = 0;
+  numberFrames = 0;
+  canvas.width = 160;
+  canvas.height = canvas.width * this.videoHeight / this.videoWidth;
+});
+
+video.addEventListener('seeked', function() {
+  drawFrame(this, framesHolder);
+  if (this.currentTime < this.duration) {
+    this.currentTime += 1 / fps;
+    progress.textContent = `${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)} detik`;
+  } else {
+    endTime = new Date().getTime();
+    const t = (endTime - startTime) / 1000;
+    const m = Math.floor(t / 60);
+    const s = t - m * 60;
+
+    progress.innerHTML = `<i class="fa-solid fa-clock"></i> Waktu proses: ${m}m ${s.toFixed(2)}s<br/><i class="fa-solid fa-camera"></i> Jumlah frame: ${numberFrames}`;
+    URL.revokeObjectURL(videoInput.src);
+  }
+});
+
+function drawFrame(v, holder) {
+  ctx.filter = 'none';
+  ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+
+  canvas.toBlob(function(blob) {
+    const url = URL.createObjectURL(blob);
+    const frameDiv = document.createElement('div');
+    frameDiv.classList.add('frame');
+
+    const img = document.createElement('img');
+    img.src = url;
+
+    const downloadIcon = document.createElement('a');
+    downloadIcon.href = url;
+    downloadIcon.download = `frame_${numberFrames + 1}.jpg`;
+    downloadIcon.classList.add('download-icon');
+    downloadIcon.innerHTML = '<i class="fa-solid fa-download"></i>';
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay-alert');
+    overlay.textContent = 'Sudah diunduh';
+
+    frameDiv.appendChild(img);
+    frameDiv.appendChild(downloadIcon);
+    frameDiv.appendChild(overlay);
+    holder.appendChild(frameDiv);
+
+    downloadIcon.addEventListener('click', (e) => {
+      if (downloadIcon.classList.contains('downloaded')) {
+        e.preventDefault();
+        frameDiv.classList.add('show-alert');
+        setTimeout(() => frameDiv.classList.remove('show-alert'), 1500);
+        return;
+      }
+
+      setTimeout(() => {
+        downloadIcon.classList.add('downloaded');
+        frameDiv.classList.add('show-alert');
+        setTimeout(() => frameDiv.classList.remove('show-alert'), 1500);
+      }, 100);
+    });
+
+  }, 'image/jpeg', 0.95);
+
+  numberFrames += 1;
+}
 </script>
 
 </body>
