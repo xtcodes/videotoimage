@@ -27,7 +27,6 @@
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     padding: 20px;
-    height: auto;
   }
 
   .controls {
@@ -38,7 +37,6 @@
     margin-bottom: 24px;
   }
 
-  /* Tombol Upload */
   .upload-btn {
     position: relative;
     display: inline-block;
@@ -75,10 +73,9 @@
     width: 100%;
   }
 
-  /* Grid gambar */
   #framesHolder.grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* desktop: 3 kolom */
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     justify-items: center;
   }
@@ -98,14 +95,12 @@
     transform: scale(1.03);
   }
 
-  /* Tablet & Mobile: 2 kolom */
   @media (max-width: 768px) {
     #framesHolder.grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* Extra kecil: 1 kolom jika layar di bawah 400px */
   @media (max-width: 400px) {
     #framesHolder.grid {
       grid-template-columns: 1fr;
@@ -117,25 +112,14 @@
 
 <div class="container">
   <div class="controls">
-    <!-- Tombol Upload -->
     <label class="upload-btn">
       📁 Upload Video
       <input id="videoInput" type="file" accept="video/*">
     </label>
-
-    <!-- Progress -->
     <p id="progress">Ready</p>
   </div>
 
   <div id="framesHolder" class="grid"></div>
-
-  <svg width="0" height="0">
-    <defs>
-      <filter id="filter">
-        <feColorMatrix in="SourceGraphic" result="saturate0" type="saturate" values="0"/>
-      </filter>
-    </defs>
-  </svg>
 </div>
 
 <script>
@@ -188,13 +172,15 @@
   });
 
   function drawFrame(v, holder) {
-    ctx.filter = 'url(#filter)';
+    // Jangan gunakan filter agar warnanya tetap asli
+    ctx.filter = 'none';
     ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+
     canvas.toBlob(function(blob) {
       const img = new Image();
       img.src = URL.createObjectURL(blob);
       holder.appendChild(img);
-    }, 'image/jpeg');
+    }, 'image/jpeg', 0.95); // kualitas tinggi
     numberFrames += 1;
   }
 </script>
