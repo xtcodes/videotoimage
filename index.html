@@ -16,7 +16,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 
 #framesHolder {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2x2 tetap di semua layar */
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   justify-items: center;
 }
@@ -69,14 +69,16 @@ videoInput.addEventListener('change', async function() {
   videoElem.preload = 'metadata';
 
   videoElem.addEventListener('loadedmetadata', async ()=>{
-    const totalFrames = 4; // 2x2 grid
+    const frameRate = 1; // frame per detik, bisa diubah
+    const totalFrames = Math.ceil(videoElem.duration * frameRate);
+
     for(let i=0;i<totalFrames;i++){
       const canvas = document.createElement('canvas');
       canvas.width = videoElem.videoWidth;
       canvas.height = videoElem.videoHeight;
       const ctx = canvas.getContext('2d');
 
-      videoElem.currentTime = i * (videoElem.duration / totalFrames);
+      videoElem.currentTime = i / frameRate;
       await new Promise(r => videoElem.addEventListener('seeked', r, {once:true}));
 
       ctx.drawImage(videoElem,0,0,canvas.width,canvas.height);
