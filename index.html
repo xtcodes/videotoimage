@@ -146,7 +146,7 @@
 <div class="container">
   <div class="controls">
     <label class="upload-btn">
-      📁 Upload Video
+      <i class="fa-solid fa-file-video"></i> Upload Video
       <input id="videoInput" type="file" accept="video/*">
     </label>
     <p id="progress">Ready</p>
@@ -174,7 +174,7 @@
   videoInput.addEventListener('change', function() {
     if (this.files.length > 0) {
       const fileName = this.files[0].name;
-      uploadLabel.innerHTML = `🎬 ${fileName}<input id="videoInput" type="file" accept="video/*">`;
+      uploadLabel.innerHTML = `<i class="fa-solid fa-file-video"></li> ${fileName}<input id="videoInput" type="file" accept="video/*">`;
       framesHolder.innerHTML = '';
       progress.textContent = 'Loading...';
       video.src = URL.createObjectURL(this.files[0]);
