@@ -90,6 +90,16 @@ body {
 .overlay-alert { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); color:#fff; padding:8px 14px; border-radius:6px; font-size:14px; text-align:center; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.4s ease, transform 0.3s ease; z-index:3; }
 .frame.show-alert .overlay-alert { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
 .overlay-alert i { color:#28a745; margin-right:6px; }
+
+/* Footer style */
+.footer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -106,10 +116,15 @@ body {
   </div>
 
   <p id="article">
-    Video to Image Converter adalah alat yang memungkinkan pengguna mengekstrak frame dari video menjadi gambar secara cepat dan mudah. Dengan teknologi ini, setiap detik dalam video dapat diubah menjadi foto berkualitas tinggi tanpa kehilangan detail penting. Alat ini sangat berguna bagi para content creator, editor video, atau siapa saja yang membutuhkan snapshot dari video untuk keperluan dokumentasi, desain, atau media sosial.
+    Video to Image Converter adalah alat untuk mengekstrak frame dari video menjadi gambar berkualitas tinggi secara cepat dan mudah.
   </p>
 
   <div id="framesHolder"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    &copy; 2025 Video Frame Extractor. Semua hak cipta dilindungi.
+  </div>
 </div>
 
 <script>
@@ -191,7 +206,6 @@ videoInput.addEventListener('change', async function() {
       progress.textContent = `Memproses frame ${i+1}/${totalFrames}`;
     }
 
-    // Tambahkan centang hijau di depan teks selesai
     progress.innerHTML = '<i class="fa-solid fa-check" style="color:#28a745; margin-right:6px;"></i> Selesai! ' + totalFrames + ' frame dihasilkan.';
   });
 });
