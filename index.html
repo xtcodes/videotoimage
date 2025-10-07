@@ -30,16 +30,16 @@
 
   .controls {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    gap: 8px;
+    align-items: center;
     margin-bottom: 24px;
   }
 
   .upload-btn {
     position: relative;
-    display: inline-block;
-    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 14px;
     background-color: #0078d7;
     color: #fff;
@@ -48,7 +48,6 @@
     cursor: pointer;
     transition: background 0.2s ease;
     font-size: 15px;
-    text-align: center;
   }
 
   .upload-btn i { margin-right: 8px; }
@@ -130,7 +129,7 @@
     border-radius: 6px;
     font-size: 14px;
     text-align: center;
-    white-space: nowrap;       /* ⚡ single line */
+    white-space: nowrap; 
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -153,15 +152,20 @@
       <i class="fa-solid fa-file-video"></i> Upload Video
       <input id="videoInput" type="file" accept="video/*">
     </label>
-    <p id="progress">Ready</p>
+
+    <button id="resetBtn" class="upload-btn" style="padding:0 12px; width:auto; font-size:16px; display:flex; align-items:center; justify-content:center;">
+      <i class="fa-solid fa-rotate-left fa-lg"></i>
+    </button>
   </div>
 
+  <p id="progress">Ready</p>
   <div id="framesHolder" class="grid"></div>
 </div>
 
 <script>
 const videoInput = document.querySelector('#videoInput');
 const uploadLabel = document.querySelector('.upload-btn');
+const resetBtn = document.querySelector('#resetBtn');
 const progress = document.querySelector('#progress');
 const framesHolder = document.querySelector('#framesHolder');
 
@@ -255,6 +259,14 @@ function drawFrame(v, holder) {
 
   numberFrames += 1;
 }
+
+// Tombol reset
+resetBtn.addEventListener('click', () => {
+  framesHolder.innerHTML = '';
+  progress.textContent = 'Ready';
+  videoInput.value = '';
+  uploadLabel.innerHTML = '<i class="fa-solid fa-file-video"></i> Upload Video<input id="videoInput" type="file" accept="video/*">';
+});
 </script>
 
 </body>
