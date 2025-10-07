@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Frame Extractor Ultimate</title>
+<title>Video Frame Extractor Ultimate HD</title>
 
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -79,6 +78,16 @@ body {
 .reset-btn:hover { background-color:#005fa3; }
 .reset-btn.clicked { background-color: #ccc; color: #666; }
 
+#qualitySelect {
+  height:44px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  padding:0 8px;
+  background-color:#fff;
+  font-size:14px;
+  cursor:pointer;
+}
+
 #progress {
   font-size: 14px;
   color: #444;
@@ -112,20 +121,17 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   transition: transform 0.25s ease;
   display: block;
-  z-index: 1;
+  z-index:1;
   position: relative;
 }
 
-/* Hover preview frame */
-.frame:hover img {
-  transform: scale(1.2);
-}
+.frame:hover img { transform: scale(1.2); }
 
 .download-icon {
   position: absolute;
   bottom: 8px;
   right: 10px;
-  z-index: 2; /* pastikan di atas gambar */
+  z-index: 2;
   color: rgba(255,255,255,0.85);
   font-size: 16px;
   cursor: pointer;
@@ -134,42 +140,32 @@ body {
 }
 
 .download-icon:hover { color: #0078d7; transform: scale(1.15); }
-
-.downloaded {
-  color: #0078d7 !important;
-  text-shadow: none;
-  transform: none;
-  cursor: default;
-}
+.downloaded { color: #0078d7 !important; text-shadow:none; transform:none; cursor:default; }
 
 .frame .overlay-alert {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top:50%;
+  left:50%;
   transform: translate(-50%, -50%);
   background-color: rgba(0,0,0,0.5);
   backdrop-filter: blur(4px);
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  text-align: center;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
+  color:#fff;
+  padding:8px 14px;
+  border-radius:6px;
+  font-size:14px;
+  text-align:center;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
   transition: opacity 0.4s ease, transform 0.3s ease;
-  z-index: 3; /* selalu di atas */
+  z-index:3;
 }
 
-.frame.show-alert .overlay-alert {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1.05);
-}
+.frame.show-alert .overlay-alert { opacity:1; transform:translate(-50%, -50%) scale(1.05); }
+.overlay-alert i { color:#28a745; margin-right:6px; }
 
-.overlay-alert i { color: #28a745; margin-right: 6px; }
-
-@media (max-width: 768px) { #framesHolder.grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 400px) { #framesHolder.grid { grid-template-columns: 1fr; } }
+@media (max-width:768px){#framesHolder.grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:400px){#framesHolder.grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -184,6 +180,12 @@ body {
     <button id="resetBtn" class="reset-btn">
       <i class="fa-solid fa-rotate-left fa-lg"></i>
     </button>
+
+    <select id="qualitySelect">
+      <option value="sd">SD (Preview)</option>
+      <option value="hd">HD (720p)</option>
+      <option value="fullhd">Full HD (1080p)</option>
+    </select>
   </div>
 
   <p id="progress">Ready</p>
@@ -196,102 +198,120 @@ const uploadText = document.querySelector('#uploadText');
 const resetBtn = document.querySelector('#resetBtn');
 const progress = document.querySelector('#progress');
 const framesHolder = document.querySelector('#framesHolder');
+const qualitySelect = document.querySelector('#qualitySelect');
 
 const video = document.createElement('video');
-video.preload = "auto";
+video.preload="auto";
 
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
+let fps=1, startTime, endTime, numberFrames=0;
 
-let fps = 1;
-let startTime, endTime;
-let numberFrames = 0;
-
-videoInput.addEventListener('change', function() {
-  if (this.files.length > 0) {
-    uploadText.textContent = this.files[0].name;
-    framesHolder.innerHTML = '';
-    progress.textContent = 'Loading...';
-    video.src = URL.createObjectURL(this.files[0]);
+videoInput.addEventListener('change',function(){
+  if(this.files.length>0){
+    uploadText.textContent=this.files[0].name;
+    framesHolder.innerHTML='';
+    progress.textContent='Loading...';
+    video.src=URL.createObjectURL(this.files[0]);
     resetBtn.classList.remove('clicked');
   }
 });
 
-video.addEventListener('loadeddata', function() {
-  startTime = new Date().getTime();
-  this.currentTime = 0;
-  numberFrames = 0;
-  canvas.width = 160;
-  canvas.height = canvas.width * this.videoHeight / this.videoWidth;
+video.addEventListener('loadeddata',function(){
+  startTime=new Date().getTime();
+  this.currentTime=0;
+  numberFrames=0;
 });
 
-video.addEventListener('seeked', function() {
-  drawFrame(this, framesHolder);
-  if (this.currentTime < this.duration) {
-    this.currentTime += 1 / fps;
-    progress.textContent = `${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)} detik`;
-  } else {
-    endTime = new Date().getTime();
-    const t = (endTime - startTime) / 1000;
-    const m = Math.floor(t / 60);
-    const s = t - m * 60;
-    progress.innerHTML = `<i class="fa-solid fa-clock"></i> Waktu proses: ${m}m ${s.toFixed(2)}s<br/><i class="fa-solid fa-camera"></i> Jumlah frame: ${numberFrames}`;
-    URL.revokeObjectURL(videoInput.src);
+video.addEventListener('seeked',function(){
+  drawFrame(this,framesHolder);
+  if(this.currentTime<this.duration){ this.currentTime+=1/fps;
+    progress.textContent=`${this.currentTime.toFixed(2)} / ${this.duration.toFixed(2)} detik`;
+  }else{
+    endTime=new Date().getTime();
+    const t=(endTime-startTime)/1000;
+    const m=Math.floor(t/60);
+    const s=t-m*60;
+    progress.innerHTML=`<i class="fa-solid fa-clock"></i> Waktu proses: ${m}m ${s.toFixed(2)}s<br/><i class="fa-solid fa-camera"></i> Jumlah frame: ${numberFrames}`;
   }
 });
 
-function drawFrame(v, holder) {
-  ctx.filter = 'none';
-  ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+function getCanvas(video,quality){
+  const canvas=document.createElement('canvas');
+  switch(quality){
+    case 'sd':
+      canvas.width=160;
+      canvas.height=160*video.videoHeight/video.videoWidth;
+      break;
+    case 'hd':
+      canvas.width=1280;
+      canvas.height=1280*video.videoHeight/video.videoWidth;
+      break;
+    case 'fullhd':
+      canvas.width=1920;
+      canvas.height=1920*video.videoHeight/video.videoWidth;
+      break;
+  }
+  canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);
+  return canvas;
+}
 
-  canvas.toBlob(function(blob) {
-    const url = URL.createObjectURL(blob);
-    const frameDiv = document.createElement('div');
+function drawFrame(v,holder){
+  const canvasPreview=document.createElement('canvas');
+  canvasPreview.width=160;
+  canvasPreview.height=160*v.videoHeight/v.videoWidth;
+  canvasPreview.getContext('2d').drawImage(v,0,0,canvasPreview.width,canvasPreview.height);
+
+  canvasPreview.toBlob(function(blob){
+    const url=URL.createObjectURL(blob);
+    const frameDiv=document.createElement('div');
     frameDiv.classList.add('frame');
 
-    const img = document.createElement('img');
-    img.src = url;
+    const img=document.createElement('img');
+    img.src=url;
 
-    const downloadIcon = document.createElement('a');
-    downloadIcon.href = url;
-    downloadIcon.download = `frame_${numberFrames + 1}.jpg`;
+    const downloadIcon=document.createElement('a');
+    downloadIcon.href=url;
+    downloadIcon.download=`frame_${numberFrames+1}.jpg`;
     downloadIcon.classList.add('download-icon');
-    downloadIcon.innerHTML = '<i class="fa-solid fa-download"></i>';
+    downloadIcon.innerHTML='<i class="fa-solid fa-download"></i>';
 
-    const overlay = document.createElement('div');
+    const overlay=document.createElement('div');
     overlay.classList.add('overlay-alert');
-    overlay.innerHTML = '<i class="fa-solid fa-check"></i> Sudah diunduh';
+    overlay.innerHTML='<i class="fa-solid fa-check"></i> Sudah diunduh';
 
     frameDiv.appendChild(img);
     frameDiv.appendChild(downloadIcon);
     frameDiv.appendChild(overlay);
     holder.appendChild(frameDiv);
 
-    downloadIcon.addEventListener('click', (e) => {
-      if (downloadIcon.classList.contains('downloaded')) {
+    downloadIcon.addEventListener('click',function(e){
+      if(downloadIcon.classList.contains('downloaded')){
         e.preventDefault();
         frameDiv.classList.add('show-alert');
-        setTimeout(() => frameDiv.classList.remove('show-alert'), 1500);
+        setTimeout(()=>frameDiv.classList.remove('show-alert'),1500);
         return;
       }
-
-      setTimeout(() => {
+      const quality=qualitySelect.value;
+      const canvasHD=getCanvas(video,quality);
+      canvasHD.toBlob(function(blobHD){
+        const urlHD=URL.createObjectURL(blobHD);
+        downloadIcon.href=urlHD;
+        downloadIcon.download=`frame_${numberFrames+1}.jpg`;
         downloadIcon.classList.add('downloaded');
         frameDiv.classList.add('show-alert');
-        setTimeout(() => frameDiv.classList.remove('show-alert'), 1500);
-      }, 100);
+        setTimeout(()=>frameDiv.classList.remove('show-alert'),1500);
+      },'image/jpeg',0.95);
     });
 
-  }, 'image/jpeg', 0.95);
+  },'image/jpeg',0.95);
 
-  numberFrames += 1;
+  numberFrames+=1;
 }
 
-resetBtn.addEventListener('click', () => {
-  framesHolder.innerHTML = '';
-  progress.textContent = 'Ready';
-  videoInput.value = '';
-  uploadText.textContent = 'Upload Video';
+resetBtn.addEventListener('click',()=>{
+  framesHolder.innerHTML='';
+  progress.textContent='Ready';
+  videoInput.value='';
+  uploadText.textContent='Upload Video';
   resetBtn.classList.add('clicked');
 });
 </script>
