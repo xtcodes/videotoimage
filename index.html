@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Frame Extractor HD Grid 2x2</title>
+<title>Video Frame Extractor 2x2 Responsive</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; display:flex; justify-content:center; padding:20px; }
@@ -20,7 +20,6 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
   gap: 12px;
   justify-items: center;
 }
-
 @media (max-width:768px) { #framesHolder { grid-template-columns: 1fr 1fr; } }
 @media (max-width:480px) { #framesHolder { grid-template-columns: 1fr; } }
 
@@ -36,7 +35,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 .frame.show-alert .overlay-alert { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
 .overlay-alert i { color:#28a745; margin-right:6px; }
 
-#progress { font-size:14px; color:#444; background:#f2f2f2; border:1px solid #ccc; border-radius:6px; padding:10px; width:100%; margin-bottom:16px; text-align:center; }
+#progress { font-size:14px; color:#444; margin-bottom:16px; text-align:center; }
 </style>
 </head>
 <body>
@@ -49,7 +48,7 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
     </label>
   </div>
 
-  <p id="progress">Ready</p>
+  <p id="progress"></p>
   <div id="framesHolder"></div>
 </div>
 
@@ -69,12 +68,10 @@ videoInput.addEventListener('change', async function() {
   const blobURL = URL.createObjectURL(file);
   const videoElem = document.createElement('video');
   videoElem.src = blobURL;
-  videoElem.muted = true;
-
-  await videoElem.play().catch(()=>{}); // autoplay muted
+  videoElem.preload = 'metadata';
 
   videoElem.addEventListener('loadedmetadata', async ()=>{
-    const totalFrames = 4; // 2x2 grid = 4 frame contoh
+    const totalFrames = 4; // 2x2 grid
     for(let i=0;i<totalFrames;i++){
       const canvas = document.createElement('canvas');
       canvas.width = videoElem.videoWidth;
@@ -82,9 +79,10 @@ videoInput.addEventListener('change', async function() {
       const ctx = canvas.getContext('2d');
 
       videoElem.currentTime = i * (videoElem.duration / totalFrames);
-      await new Promise(r=>videoElem.addEventListener('seeked',r,{once:true}));
+      await new Promise(r => videoElem.addEventListener('seeked', r, {once:true}));
 
       ctx.drawImage(videoElem,0,0,canvas.width,canvas.height);
+
       canvas.toBlob(blob=>{
         const url = URL.createObjectURL(blob);
         const frameDiv = document.createElement('div');
@@ -119,7 +117,9 @@ videoInput.addEventListener('change', async function() {
           frameDiv.classList.add('show-alert');
           setTimeout(()=>frameDiv.classList.remove('show-alert'),1500);
         });
+
       }, 'image/jpeg', 0.95);
+
       progress.textContent = `Memproses frame ${i+1}/${totalFrames}`;
     }
     progress.textContent = `Selesai! ${totalFrames} frame dihasilkan.`;
