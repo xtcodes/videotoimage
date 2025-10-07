@@ -16,10 +16,11 @@ body { font-family: system-ui, sans-serif; background:#f7f7f7; color:#333; displ
 
 #framesHolder {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* 2 kolom desktop & mobile */
   gap: 12px;
   justify-items: center;
 }
+
 @media (max-width:768px) { #framesHolder { grid-template-columns: 1fr 1fr; } }
 @media (max-width:480px) { #framesHolder { grid-template-columns: 1fr; } }
 
